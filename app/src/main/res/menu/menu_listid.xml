@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/list_1"
+        android:title="Display List ID: 1" />
+
+    <item
+        android:id="@+id/list_2"
+        android:title="Display List ID: 2" />
+
+    <item
+        android:id="@+id/list_3"
+        android:title="Display List ID: 3" />
+
+    <item
+        android:id="@+id/list_4"
+        android:title="Display List ID: 4" />
+
+    <item
+        android:id="@+id/list_all"
+        android:title="Display All" />
+</menu>
