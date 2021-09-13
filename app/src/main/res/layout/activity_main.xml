@@ -5,42 +5,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
     tools:context=".MainActivity">
 
-    <TextView
+    <androidx.cardview.widget.CardView
         android:id="@+id/tv_listId"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/recyclerView"
+        app:layout_constraintEnd_toStartOf="@id/tv_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="8dp"
-        android:textSize="24sp"
         android:text="List ID"
         android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/tv_name"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/recyclerView"/>
+        android:textSize="24sp" />
+    </androidx.cardview.widget.CardView>
 
-    <TextView
+    <androidx.cardview.widget.CardView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textSize="24sp"
-        android:text = "Name"
-        android:textAlignment="center"
-        app:layout_constraintStart_toEndOf="@+id/tv_listId"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_listId"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_listId"/>
+        app:layout_constraintStart_toEndOf="@+id/tv_listId"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Name"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_listId"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_listId" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

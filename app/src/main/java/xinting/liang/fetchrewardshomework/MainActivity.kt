@@ -4,20 +4,20 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import xinting.liang.fetchrewardshomework.databinding.ActivityMainBinding
 import android.view.Menu
+import android.view.MenuItem
 import androidx.lifecycle.Observer
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
 import xinting.liang.fetchrewardshomework.data.ItemDatabase
-import xinting.liang.fetchrewardshomework.data.ItemEntity
-import xinting.liang.fetchrewardshomework.databinding.ItemDataBinding
-import xinting.liang.fetchrewardshomework.viewModel.DataViewModel
-import xinting.liang.fetchrewardshomework.viewModel.DataViewModelFactory
+import xinting.liang.fetchrewardshomework.viewholder.DataItem
+import xinting.liang.fetchrewardshomework.viewmodel.DataViewModel
+import xinting.liang.fetchrewardshomework.viewmodel.DataViewModelFactory
 
-class MainActivity: AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     lateinit var dataViewModel: DataViewModel
     lateinit var binding: ActivityMainBinding
+    private val dataAdapter = GroupAdapter<GroupieViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,54 +31,50 @@ class MainActivity: AppCompatActivity() {
         dataViewModel = dataViewModelFactory.create(DataViewModel::class.java)
 
         // Groupie recyclerView adapter
-        val dataAdapter = GroupAdapter<GroupieViewHolder>()
         binding.recyclerView.adapter = dataAdapter
-        dataViewModel.filterNameOrderByNameAndId().observe(this, Observer {
-                it
-                .forEach { dataAdapter.add(DataItem(it)) }
-        }) // can also use Kotlin to filter data
-           //     .filter { !it.name.isNullOrBlank() }
-//                .sortedBy { it.name!!.replace("Item ", "").toInt() }
-//                .sortedBy { it.listId }
+        displayAllDataOrderByListIdAndName()
 
-    }
-
-    // Groupie recyclerView  bind && layout
-    inner class DataItem (private val items: ItemEntity) : Item<GroupieViewHolder>(){
-
-        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-            val viewHolderBinding = ItemDataBinding.bind(viewHolder.itemView)
-            viewHolderBinding.itemListId.text = items.listId.toString()
-            viewHolderBinding.itemName.text = items.name.toString()
-        }
-
-        override fun getLayout(): Int {
-            return R.layout.item_data
-        }
     }
 
     // inflate menu Item && handle app bar menu items
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_listid,menu)
+        menuInflater.inflate(R.menu.menu_listid, menu)
         return true
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when(item.itemId){
-//
-//            R.id.list_1->{
-//              dataViewModel.getItemBasedOnListId(1)
-//            }
-//            R.id.list_2->{
-//
-//            }
-//            R.id.list_3->{
-//
-//            }
-//            R.id.list_4 ->{
-//
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.list_1 -> filterBasedOnListId(1)
+            R.id.list_2 -> filterBasedOnListId(2)
+            R.id.list_3 -> filterBasedOnListId(3)
+            R.id.list_4 -> filterBasedOnListId(4)
+            R.id.list_all -> displayAllDataOrderByListIdAndName()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun filterBasedOnListId(listId: Int) {
+        dataViewModel.filterBasedOnListId(listId).observe(this, Observer { items ->
+            dataAdapter.clear()
+            items.forEach {
+                dataAdapter.add(DataItem(it))
+            }
+            dataAdapter.notifyDataSetChanged()
+        })
+    }
+
+    private fun displayAllDataOrderByListIdAndName() {
+        dataViewModel.filterNameOrderByNameAndId().observe(this, Observer { allItems ->
+            dataAdapter.clear()
+            allItems.forEach {
+                dataAdapter.add(DataItem(it))
+            }
+            dataAdapter.notifyDataSetChanged()
+        })
+
+        // can also use Kotlin to filter from entire data set
+        //     .filter { !it.name.isNullOrBlank() }
+        //     .sortedBy { it.name!!.replace("Item ", "").toInt() }
+        //     .sortedBy { it.listId }
+    }
 }
