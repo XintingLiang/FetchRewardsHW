@@ -24,7 +24,7 @@ private val retrofitObject = Retrofit.Builder()
 // API Interface
 interface DataApiService {
     @GET("hiring.json")
-    fun getUserData (): Call<List<User>>
+    fun getUserData (): Call<List<WireItem>>
 }
 
 object DataRetrofitApi{

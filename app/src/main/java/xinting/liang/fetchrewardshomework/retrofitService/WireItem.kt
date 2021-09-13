@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 //)
 
 @Parcelize
-data class User(
+data class WireItem(
     val id: Int,
     val listId: Int,
     val name: String?
