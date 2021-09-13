@@ -1,38 +1,55 @@
 package xinting.liang.fetchrewardshomework.viewModel
 
-import android.net.wifi.p2p.WifiP2pManager
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import xinting.liang.fetchrewardshomework.data.ItemDatabase
+import xinting.liang.fetchrewardshomework.data.ItemEntity
 import xinting.liang.fetchrewardshomework.retrofitService.DataRetrofitApi
-import xinting.liang.fetchrewardshomework.retrofitService.User
+import xinting.liang.fetchrewardshomework.retrofitService.WireItem
+import xinting.liang.fetchrewardshomework.util.executeThread
 
-class DataViewModel(): ViewModel() {
-
-    val data = MutableLiveData<User>()
+class DataViewModel(private val itemDatabase: ItemDatabase): ViewModel() {
 
     init {
         getDataFromApi()
     }
 
-    fun getDataFromApi(){
-        DataRetrofitApi.retrofitService.getUserData().enqueue(object : Callback<List<User>> {
-            
-            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                Log.i("data2","success ${response.body()?.size}")
+    fun insertItems(itemEntities: List<ItemEntity>){
+        executeThread {
+            itemDatabase.itemDao().insertAll(itemEntities)
+        }
+    }
 
-                response.body()?.forEach { user ->
-                    Log.i("data","user: ${user.id}, ${user.listId}, ${user.name}")
+    fun filterNameOrderByNameAndId():LiveData<List<ItemEntity>>{
+        return itemDatabase.itemDao().filterNameOrderByNameAndId()
+    }
+
+    private fun getDataFromApi(){
+        DataRetrofitApi.retrofitService.getUserData().enqueue(object : Callback<List<WireItem>> {
+
+            // insert WireItem into ItemDatabase as ItemEntity
+            override fun onResponse(call: Call<List<WireItem>>, response: Response<List<WireItem>>) {
+                val set = mutableSetOf<Int>()
+                val allItems = response.body()?.map {
+                    val nameNumber = if(!it.name.isNullOrEmpty()) it.name?.replace("Item ","")?.toInt() else null
+                    val dataToInsert = ItemEntity(
+                        id = it.id,
+                        listId = it.listId,
+                        name = it.name,
+                        nameNumber = nameNumber?:-1
+                    )
+                    dataToInsert
                 }
+                allItems?.let(::insertItems)
             }
 
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
+            override fun onFailure(call: Call<List<WireItem>>, t: Throwable) {
                 Log.i("data2","failed ${t.message}")
             }
-        }
-        )
+        })
     }
 }
