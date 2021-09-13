@@ -1,5 +1,6 @@
 # Fetch Rewards Take Home
 For this project, the Android App fetches Json from a static URL, saves it to a Room database, and displays it in a RecyclerView.
+
 <img src="https://github.com/XintingLiang/FetchRewardsHW/blob/main/screenshot-0.png" width="240" /> <img src="https://github.com/XintingLiang/FetchRewardsHW/blob/main/screenshot-1.png" width="240" />
 
 # Libraries
